@@ -1004,7 +1004,11 @@
     modeGrid.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('selected', c === card));
   });
 
-  startBtn.onclick = () => startGame();
+  startBtn.onclick = () => {
+    startScreen.classList.add('active');
+    tutorialScreen.classList.remove('active');
+    buildClassCards();
+  };
   tutorialBtn.onclick = () => {
     startScreen.classList.remove('active');
     tutorialScreen.classList.add('active');
