@@ -20,7 +20,7 @@
       --tile: 34px;
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);overflow:hidden}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);overflow:auto}
     body{
       background:
         radial-gradient(circle at 20% 10%, #24435a 0%, transparent 30%),
@@ -30,9 +30,9 @@
     button{font:inherit}
     .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}
     .screen.active{display:flex}
-    .card{background:linear-gradient(180deg, rgba(23,38,49,.96), rgba(12,20,26,.96));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);border-radius:24px;max-width:1200px;width:min(1200px,100%);max-height:calc(100vh - 24px);overflow:auto}
-    .start-wrap{display:grid;grid-template-columns:1.1fr .9fr;min-height:min(92vh,860px)}
-    .hero{padding:42px 38px;background:
+    .card{background:linear-gradient(180deg, rgba(23,38,49,.96), rgba(12,20,26,.96));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);border-radius:24px;max-width:1240px;width:min(1240px,100%);max-height:calc(100vh - 24px);overflow:auto}
+    .start-wrap{display:grid;grid-template-columns:1.1fr .9fr;min-height:min(90vh,860px)}
+    .hero{padding:30px 28px;background:
       radial-gradient(circle at 15% 25%, rgba(124,224,255,.18), transparent 25%),
       radial-gradient(circle at 85% 15%, rgba(158,245,143,.13), transparent 24%),
       linear-gradient(135deg, rgba(20,37,50,.96), rgba(10,18,24,.96));position:relative}
@@ -51,7 +51,10 @@
     .tips{display:grid;gap:12px}
     .tip{background:linear-gradient(180deg, rgba(31,49,63,.95), rgba(18,29,38,.95));padding:14px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.07);line-height:1.5}
     .tip b{display:block;margin-bottom:4px;color:#fff}
-    .classes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}
+    .classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:10px}
+    .mode-grid{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:10px;margin-top:18px;max-width:560px}
+    .mode-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;cursor:pointer}
+    .mode-card.selected{border-color:rgba(124,224,255,.8);box-shadow:0 0 0 2px rgba(124,224,255,.2) inset}
     .class-card{background:linear-gradient(180deg, rgba(31,49,63,.95), rgba(18,29,38,.95));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:14px;cursor:pointer;transition:.2s transform,.2s border-color,.2s box-shadow;min-height:190px;position:relative;overflow:hidden}
     .class-card:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(0,0,0,.28)}
     .class-card.selected{border-color:rgba(124,224,255,.6);box-shadow:0 0 0 2px rgba(124,224,255,.18) inset}
@@ -62,7 +65,7 @@
     .moves span{display:block;margin-top:6px;color:#a9c0cf}
     .selection-bar{margin-top:auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .pill{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#e8f5ff;font-weight:700}
-    .game-wrap{position:absolute;inset:0;display:none;flex-direction:column}
+    .game-wrap{position:fixed;inset:0;display:none;flex-direction:column}
     .game-wrap.active{display:flex}
     .hud{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;padding:14px 14px 10px}
     .hud-panel{background:linear-gradient(180deg, rgba(20,31,40,.95), rgba(11,18,24,.95));border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:12px 14px;box-shadow:var(--shadow)}
@@ -81,7 +84,7 @@
     .score strong{font-size:14px;color:#dff3ff;letter-spacing:.05em;text-transform:uppercase}
     .roundmsg{font-size:18px;font-weight:900;color:#fff;min-height:26px}
     .arena-shell{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:10px 14px 18px}
-    .arena{position:relative;width:min(100%, min(96vw, 1200px));height:min(100%, 720px);max-height:720px;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);background:#0f1d26}
+    .arena{position:relative;width:min(100%, 1240px);aspect-ratio:24 / 18;max-height:100%;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);background:#0f1d26}
     canvas{display:block;width:100%;height:100%}
     .overlay{position:absolute;inset:0;pointer-events:none}
     .toast{position:absolute;left:50%;top:16px;transform:translateX(-50%);padding:10px 14px;border-radius:999px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);font-weight:800;opacity:0;transition:opacity .2s ease}
@@ -105,7 +108,11 @@
     <div class="card start-wrap">
       <div class="hero">
         <h1 class="title">Duelo de Clases<br>1vs1</h1>
-        <div class="subtitle">Un juego local en el mismo teclado. Elige clase, muévete cuadro por cuadro, recoge objetos, usa habilidades con cooldown y derrota a tu rival.</div>
+        <div class="subtitle">Arena táctica estilo arcade. Elige clase, domina tus habilidades y derrota a tu rival humano o al bot.</div>
+        <div class="mode-grid" id="modeGrid">
+          <div class="mode-card selected" data-mode="bot"><b>1 Jugador vs Bot</b><div class="mini">Ideal para practicar y jugar solo.</div></div>
+          <div class="mode-card" data-mode="pvp"><b>2 Jugadores local</b><div class="mini">Ambos comparten el mismo teclado.</div></div>
+        </div>
         <div class="big-cta">
           <button id="startBtn" class="btn btn-primary">Jugar ahora</button>
           <button id="tutorialBtn" class="btn btn-secondary">Ver tutorial</button>
@@ -116,8 +123,8 @@
       <div class="panel-side">
         <div class="section-title">Cómo se juega</div>
         <div class="tips">
-          <div class="tip"><b>Jugador 1</b>Flechas para moverse. <span class="mini">Movimientos: 1, 2, 3 y ataque con 4.</span></div>
-          <div class="tip"><b>Jugador 2</b>W A S D para moverse. <span class="mini">Movimientos: 8, 9, 0 y ataque con 7.</span></div>
+          <div class="tip"><b>Jugador 1</b>Flechas para moverse. <span class="mini">Movimientos: 1, 2, 3 y ataque con 4. Mantén <span class="kbd">5</span> + dirección para girar sin moverte.</span></div>
+          <div class="tip"><b>Jugador 2</b>W A S D para moverse. <span class="mini">Movimientos: 8, 9, 0 y ataque con 7. Mantén <span class="kbd">O</span> + dirección para girar sin moverte.</span></div>
           <div class="tip"><b>Mapa</b>El agua te vuelve más lento. Árboles y rocas bloquean el paso.</div>
           <div class="tip"><b>Meta</b>Baja la vida del enemigo a 0 con ataques, habilidades y control del mapa.</div>
         </div>
@@ -177,6 +184,7 @@
   const toast = document.getElementById('toast');
   const roundMsg = document.getElementById('roundMsg');
   const classGrid = document.getElementById('classGrid');
+  const modeGrid = document.getElementById('modeGrid');
   const selectedPill = document.getElementById('selectedPill');
   const startScreen = document.getElementById('startScreen');
   const tutorialScreen = document.getElementById('tutorialScreen');
@@ -198,12 +206,19 @@
     ]},
     mage: { name:'Mago', icon:'✨', weapon:'🔮', color:'#7ce0ff', hp:100, atk:17, desc:'Control, persecución y teletransporte.', skills:[
       {key:'1', name:'Bola de fuego', cd:4}, {key:'2', name:'Tormenta', cd:8}, {key:'3', name:'Teletransportación', cd:6}, {key:'4', name:'Puño', cd:1.1}
+    ]},
+    paladin: { name:'Paladín', icon:'🛡️', weapon:'🔨', color:'#ffe08a', hp:155, atk:20, desc:'Tanque resistente con buen control.', skills:[
+      {key:'1', name:'Martillazo', cd:4}, {key:'2', name:'Carga santa', cd:6}, {key:'3', name:'Aura sagrada', cd:12}, {key:'4', name:'Puño', cd:1.1}
+    ]},
+    assassin: { name:'Asesino', icon:'🗡️', weapon:'🗡️', color:'#ff9fd8', hp:95, atk:21, desc:'Rápido, frágil y letal en ráfagas.', skills:[
+      {key:'1', name:'Corte veloz', cd:3}, {key:'2', name:'Paso sombra', cd:6}, {key:'3', name:'Veneno', cd:8}, {key:'4', name:'Puño', cd:1.1}
     ]}
   };
 
   const state = {
     running:false,
     selectedClass:'warrior',
+    gameMode:'bot',
     map:[],
     particles:[],
     projectiles:[],
@@ -245,7 +260,7 @@
   }
 
   function buildClassCards(){
-    const order = ['warrior','archer','mage'];
+    const order = ['warrior','archer','mage','paladin','assassin'];
     classGrid.innerHTML = '';
     for(const id of order){
       const c = CLASSES[id];
@@ -381,6 +396,10 @@
   }
 
   function canAct(p){ return p.alive && performance.now() > p.stunnedUntil && performance.now() > p.frozenUntil; }
+  function setFacingOnly(p, dx, dy){
+    if(!p || !p.alive || p.moving) return;
+    p.facing = {x:dx, y:dy};
+  }
   function ready(p, slot){ return performance.now() >= p.cooldowns[slot]; }
   function setCooldown(p, slot, seconds){ p.cooldowns[slot] = performance.now() + seconds*1000; }
   function facingPos(p, n=1){ return {x:p.x + p.facing.x*n, y:p.y + p.facing.y*n}; }
@@ -601,29 +620,23 @@
     }
   }
 
-  function handleKeyPress(key){
-    if(!state.running || !state.introDone || state.winner) return;
-    const p1 = state.players[0];
-    const p2 = state.players[1];
-    const lower = key.toLowerCase();
-
-    if(key === 'ArrowUp') attemptMove(p1,0,-1);
-    if(key === 'ArrowDown') attemptMove(p1,0,1);
-    if(key === 'ArrowLeft') attemptMove(p1,-1,0);
-    if(key === 'ArrowRight') attemptMove(p1,1,0);
-    if(key === '1') handleSpecial(p1,'s1');
-    if(key === '2') handleSpecial(p1,'s2');
-    if(key === '3') handleSpecial(p1,'s3');
-    if(key === '4') attackBasic(p1);
-
-    if(lower === 'w') attemptMove(p2,0,-1);
-    if(lower === 's') attemptMove(p2,0,1);
-    if(lower === 'a') attemptMove(p2,-1,0);
-    if(lower === 'd') attemptMove(p2,1,0);
-    if(key === '8') handleSpecial(p2,'s1');
-    if(key === '9') handleSpecial(p2,'s2');
-    if(key === '0') handleSpecial(p2,'s3');
-    if(key === '7') attackBasic(p2);
+  function runBot(now){
+    if(state.gameMode !== 'bot' || !state.introDone || state.winner) return;
+    const bot = state.players[1];
+    const enemy = state.players[0];
+    if(!bot || !enemy || !canAct(bot) || bot.moving) return;
+    if(!bot.botNext) bot.botNext = 0;
+    if(now < bot.botNext) return;
+    bot.botNext = now + rand(220, 480);
+    const dx = Math.sign(enemy.x - bot.x), dy = Math.sign(enemy.y - bot.y);
+    if(Math.abs(enemy.x - bot.x) + Math.abs(enemy.y - bot.y) <= 1){
+      setFacingOnly(bot, dx || bot.facing.x, dy || bot.facing.y);
+      if(Math.random() < 0.65) attackBasic(bot); else handleSpecial(bot, choice(['s1','s2','s3']));
+      return;
+    }
+    if(Math.random() < 0.35) handleSpecial(bot, choice(['s1','s2','s3']));
+    if(Math.abs(enemy.x - bot.x) > Math.abs(enemy.y - bot.y)) attemptMove(bot, dx, 0);
+    else attemptMove(bot, 0, dy);
   }
 
   function updateProjectiles(dt){
@@ -783,22 +796,35 @@
       ctx.rotate(Math.atan2(sy,sx));
       ctx.strokeStyle = '#d9e6ef';
       ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(4,-1); ctx.lineTo(17, -1 + Math.sin(t)*1.5); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(2,-1); ctx.lineTo(12, -1 + Math.sin(t)*1.3); ctx.stroke();
       ctx.fillStyle = '#b38b59'; ctx.fillRect(1,-4,4,8);
     } else if(p.classId === 'archer'){
       ctx.rotate(Math.atan2(sy,sx));
       ctx.strokeStyle = '#7b4a24';
       ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(0,0,11,-1.2,1.2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0,0,8,-1.2,1.2); ctx.stroke();
       ctx.strokeStyle = '#efe5bf';
-      ctx.beginPath(); ctx.moveTo(0,-11); ctx.lineTo(12,0); ctx.lineTo(0,11); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(9,0); ctx.lineTo(0,8); ctx.stroke();
     } else {
       ctx.fillStyle = '#cbd3ff';
-      ctx.beginPath(); ctx.arc(13*Math.sign(sx || 1), -10, 7, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(9*Math.sign(sx || 1), -7, 6, 0, Math.PI*2); ctx.fill();
       ctx.strokeStyle = '#8aa3ff';
       ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(12*Math.sign(sx || 1), -10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(8*Math.sign(sx || 1), -7); ctx.stroke();
     }
+    ctx.restore();
+  }
+
+  function drawFacingIndicator(p){
+    const fx = p.facing.x || 1;
+    const fy = p.facing.y || 0;
+    ctx.save();
+    ctx.translate(p.px + fx*14, p.py + fy*14);
+    ctx.rotate(Math.atan2(fy, fx));
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.beginPath();
+    ctx.moveTo(0,0); ctx.lineTo(-7,-4); ctx.lineTo(-7,4); ctx.closePath();
+    ctx.fill();
     ctx.restore();
   }
 
@@ -849,6 +875,7 @@
     if(performance.now() < p.frozenUntil) ctx.fillText('🧊', -16, -16);
 
     ctx.restore();
+    drawFacingIndicator(p);
   }
 
   function drawProjectile(pr){
@@ -923,6 +950,7 @@
       updatePlayers(now);
       updateProjectiles(dt);
       updateStorms(now);
+      runBot(now);
       updateHUD();
       drawWorld(now, dt);
     } else if(state.running){
@@ -946,30 +974,37 @@
     const p2 = state.players[1];
     const lower = key.toLowerCase();
 
-    if(key === 'ArrowUp') attemptMove(p1,0,-1);
-    if(key === 'ArrowDown') attemptMove(p1,0,1);
-    if(key === 'ArrowLeft') attemptMove(p1,-1,0);
-    if(key === 'ArrowRight') attemptMove(p1,1,0);
+    const faceP1 = state.pressed.has('5');
+    if(key === 'ArrowUp') (faceP1 ? setFacingOnly(p1,0,-1) : attemptMove(p1,0,-1));
+    if(key === 'ArrowDown') (faceP1 ? setFacingOnly(p1,0,1) : attemptMove(p1,0,1));
+    if(key === 'ArrowLeft') (faceP1 ? setFacingOnly(p1,-1,0) : attemptMove(p1,-1,0));
+    if(key === 'ArrowRight') (faceP1 ? setFacingOnly(p1,1,0) : attemptMove(p1,1,0));
     if(key === '1') handleSpecial(p1,'s1');
     if(key === '2') handleSpecial(p1,'s2');
     if(key === '3') handleSpecial(p1,'s3');
     if(key === '4') attackBasic(p1);
 
-    if(lower === 'w') attemptMove(p2,0,-1);
-    if(lower === 's') attemptMove(p2,0,1);
-    if(lower === 'a') attemptMove(p2,-1,0);
-    if(lower === 'd') attemptMove(p2,1,0);
-    if(key === '8') handleSpecial(p2,'s1');
-    if(key === '9') handleSpecial(p2,'s2');
-    if(key === '0') handleSpecial(p2,'s3');
-    if(key === '7') attackBasic(p2);
+    if(state.gameMode === 'pvp'){
+      const faceP2 = state.pressed.has('o');
+      if(lower === 'w') (faceP2 ? setFacingOnly(p2,0,-1) : attemptMove(p2,0,-1));
+      if(lower === 's') (faceP2 ? setFacingOnly(p2,0,1) : attemptMove(p2,0,1));
+      if(lower === 'a') (faceP2 ? setFacingOnly(p2,-1,0) : attemptMove(p2,-1,0));
+      if(lower === 'd') (faceP2 ? setFacingOnly(p2,1,0) : attemptMove(p2,1,0));
+      if(key === '8') handleSpecial(p2,'s1');
+      if(key === '9') handleSpecial(p2,'s2');
+      if(key === '0') handleSpecial(p2,'s3');
+      if(key === '7') attackBasic(p2);
+    }
   }
 
-  startBtn.onclick = () => {
-    startScreen.classList.add('active');
-    tutorialScreen.classList.remove('active');
-    buildClassCards();
-  };
+  modeGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.mode-card');
+    if(!card) return;
+    state.gameMode = card.dataset.mode;
+    modeGrid.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('selected', c === card));
+  });
+
+  startBtn.onclick = () => startGame();
   tutorialBtn.onclick = () => {
     startScreen.classList.remove('active');
     tutorialScreen.classList.add('active');
