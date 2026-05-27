@@ -28,7 +28,7 @@
         linear-gradient(180deg,var(--bg1),var(--bg2));
     }
     button{font:inherit}
-    .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}
+    .screen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}
     .screen.active{display:flex}
     .card{background:linear-gradient(180deg, rgba(23,38,49,.96), rgba(12,20,26,.96));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);border-radius:24px;max-width:1240px;width:min(1240px,100%);max-height:calc(100vh - 24px);overflow:auto}
     .start-wrap{display:grid;grid-template-columns:1.1fr .9fr;min-height:min(90vh,860px)}
@@ -67,7 +67,7 @@
     .pill{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#e8f5ff;font-weight:700}
     .game-wrap{position:fixed;inset:0;display:none;flex-direction:column}
     .game-wrap.active{display:flex}
-    .hud{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;padding:14px 14px 10px}
+    .hud{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;padding:10px 10px 8px;flex-shrink:0}
     .hud-panel{background:linear-gradient(180deg, rgba(20,31,40,.95), rgba(11,18,24,.95));border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:12px 14px;box-shadow:var(--shadow)}
     .player-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
     .player-name{font-weight:900}
@@ -83,13 +83,14 @@
     .score{display:flex;flex-direction:column;align-items:center;gap:7px;background:linear-gradient(180deg, rgba(26,44,58,.95), rgba(16,24,31,.95));border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:12px 18px;min-width:220px}
     .score strong{font-size:14px;color:#dff3ff;letter-spacing:.05em;text-transform:uppercase}
     .roundmsg{font-size:18px;font-weight:900;color:#fff;min-height:26px}
-    .arena-shell{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:10px 14px 18px}
+    .arena-shell{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px 10px 10px}
     .arena{position:relative;width:min(100%, 1240px);aspect-ratio:24 / 18;max-height:100%;border-radius:28px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);background:#0f1d26}
     canvas{display:block;width:100%;height:100%}
     .overlay{position:absolute;inset:0;pointer-events:none}
     .toast{position:absolute;left:50%;top:16px;transform:translateX(-50%);padding:10px 14px;border-radius:999px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);font-weight:800;opacity:0;transition:opacity .2s ease}
     .tutorial-screen{padding:30px;display:grid;place-items:center}
-    .tutorial-card{max-width:980px;width:100%;background:linear-gradient(180deg, rgba(22,36,47,.98), rgba(10,16,22,.98));border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px;box-shadow:var(--shadow)}
+    .tutorial-card{max-width:980px;width:100%;background:linear-gradient(180deg, rgba(22,36,47,.98), rgba(10,16,22,.98));border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:22px;box-shadow:var(--shadow);position:relative}
+    .close-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#eaf6ff;font-size:20px;cursor:pointer}
     .tutorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
     .note{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);padding:14px;border-radius:18px;line-height:1.5;color:#d9ebf7}
     .kbd{display:inline-block;min-width:30px;padding:2px 8px;border-radius:8px;background:#203543;border:1px solid rgba(255,255,255,.12);font-weight:900;text-align:center}
@@ -100,6 +101,7 @@
       .classes,.tutorial-grid{grid-template-columns:1fr}
       .hud{grid-template-columns:1fr}
       .center-hud{order:-1}
+      .cooldowns{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
@@ -139,6 +141,7 @@
 
   <div id="tutorialScreen" class="screen tutorial-screen">
     <div class="tutorial-card">
+      <button id="closeTutorialBtn" class="close-x" aria-label="Cerrar tutorial">×</button>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
         <div>
           <div class="section-title">Tutorial</div>
@@ -196,6 +199,8 @@
   const tutorialBtn = document.getElementById('tutorialBtn');
   const backBtn = document.getElementById('backBtn');
   const playBtn = document.getElementById('playBtn');
+  const closeTutorialBtn = document.getElementById('closeTutorialBtn');
+  let worldScale = 1, worldOffsetX = 0, worldOffsetY = 0;
 
   const CLASSES = {
     warrior: { name:'Guerrero', icon:'⚔️', weapon:'🗡️', color:'#ffd166', hp:140, atk:24, desc:'Daño fuerte y presión frontal.', skills:[
@@ -796,21 +801,21 @@
       ctx.rotate(Math.atan2(sy,sx));
       ctx.strokeStyle = '#d9e6ef';
       ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(2,-1); ctx.lineTo(12, -1 + Math.sin(t)*1.3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-1,-1); ctx.lineTo(6, -1 + Math.sin(t)*1.1); ctx.stroke();
       ctx.fillStyle = '#b38b59'; ctx.fillRect(1,-4,4,8);
     } else if(p.classId === 'archer'){
       ctx.rotate(Math.atan2(sy,sx));
       ctx.strokeStyle = '#7b4a24';
       ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(0,0,8,-1.2,1.2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0,0,5,-1.2,1.2); ctx.stroke();
       ctx.strokeStyle = '#efe5bf';
-      ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(9,0); ctx.lineTo(0,8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-5); ctx.lineTo(6,0); ctx.lineTo(0,5); ctx.stroke();
     } else {
       ctx.fillStyle = '#cbd3ff';
-      ctx.beginPath(); ctx.arc(9*Math.sign(sx || 1), -7, 6, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(4*Math.sign(sx || 1), -4, 4, 0, Math.PI*2); ctx.fill();
       ctx.strokeStyle = '#8aa3ff';
       ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(8*Math.sign(sx || 1), -7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(4*Math.sign(sx || 1), -4); ctx.stroke();
     }
     ctx.restore();
   }
@@ -930,10 +935,16 @@
   function drawWorld(now, dt){
     const w = arena.clientWidth, h = arena.clientHeight;
     ctx.clearRect(0,0,w,h);
+    const worldW = MAP_W * TILE;
+    const worldH = MAP_H * TILE;
+    worldScale = Math.min(w / worldW, h / worldH);
+    worldOffsetX = (w - worldW * worldScale) / 2;
+    worldOffsetY = (h - worldH * worldScale) / 2;
     const shakeX = state.shake ? rand(-state.shake,state.shake) : 0;
     const shakeY = state.shake ? rand(-state.shake,state.shake) : 0;
     ctx.save();
-    ctx.translate(shakeX, shakeY);
+    ctx.translate(worldOffsetX + shakeX, worldOffsetY + shakeY);
+    ctx.scale(worldScale, worldScale);
     for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++) drawTile(x,y,state.map[y][x]);
     for(const s of state.storms) drawStorm(s, now);
     for(const pr of state.projectiles) drawProjectile(pr);
@@ -1004,16 +1015,16 @@
     modeGrid.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('selected', c === card));
   });
 
-  startBtn.onclick = () => {
-    startScreen.classList.add('active');
-    tutorialScreen.classList.remove('active');
-    buildClassCards();
-  };
+  startBtn.onclick = () => startGame();
   tutorialBtn.onclick = () => {
     startScreen.classList.remove('active');
     tutorialScreen.classList.add('active');
   };
   backBtn.onclick = () => {
+    tutorialScreen.classList.remove('active');
+    startScreen.classList.add('active');
+  };
+  closeTutorialBtn.onclick = () => {
     tutorialScreen.classList.remove('active');
     startScreen.classList.add('active');
   };
